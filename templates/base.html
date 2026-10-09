@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ShopTrack</title>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('products') }}">Products</a> |
+        <a href="{{ url_for('add_product') }}">Add Product</a>
+    </nav>
+    <hr>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <p><strong>{{ message }}</strong></p>
+        {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</body>
+</html>

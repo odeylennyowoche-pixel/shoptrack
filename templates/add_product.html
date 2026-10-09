@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Add Product</h1>
+
+<form method="POST">
+    <p>Name: <input type="text" name="name" required></p>
+    <p>Selling price: <input type="number" name="price" step="0.01" min="0" required></p>
+    <p>Cost price: <input type="number" name="cost" step="0.01" min="0" required></p>
+    <p>Stock quantity: <input type="number" name="stock" min="0" required></p>
+    <p>Low stock warning level: <input type="number" name="low_stock_level" value="5" min="0" required></p>
+    <button type="submit">Save Product</button>
+</form>
+{% endblock %}
