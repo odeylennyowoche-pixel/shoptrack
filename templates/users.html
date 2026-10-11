@@ -3,29 +3,37 @@
 {% block content %}
 <h1>Users</h1>
 
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Username</th>
-        <th>Role</th>
-    </tr>
-    {% for u in users %}
-    <tr>
-        <td>{{ u.username }}</td>
-        <td>{{ u.role }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.role }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <h2>Add User</h2>
-<form method="POST">
-    <p>Username: <input type="text" name="username" required></p>
-    <p>Password: <input type="password" name="password" minlength="6" required></p>
-    <p>Role:
-        <select name="role">
-            <option value="cashier">Cashier</option>
-            <option value="admin">Admin</option>
-        </select>
-    </p>
-    <button type="submit">Create User</button>
-</form>
+<div class="card">
+    <form method="POST">
+        <label>Username <input type="text" name="username" required></label>
+        <label>Password <input type="password" name="password" minlength="6" required></label>
+        <label>Role
+            <select name="role">
+                <option value="cashier">Cashier</option>
+                <option value="admin">Admin</option>
+            </select>
+        </label>
+        <button type="submit" class="btn">Create User</button>
+    </form>
+</div>
 {% endblock %}

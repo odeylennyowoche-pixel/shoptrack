@@ -1,0 +1,406 @@
+/* ==========================================================
+   ShopTrack stylesheet
+   Sections:
+     1. Colour palette (variables)
+     2. Page basics
+     3. Navigation bar
+     4. Cards and page layout
+     5. Flash messages
+     6. Forms and inputs
+     7. Buttons
+     8. Tables
+     9. Dashboard summary cards
+    10. Phone screens
+   ========================================================== */
+
+
+/* ---------- 1. Colour palette ----------
+   Every colour is defined once here as a variable. The rest of the
+   file uses var(--name), so changing a colour means editing one line. */
+:root {
+    --primary: #0f766e;        /* teal: nav bar, main buttons */
+    --primary-dark: #115e59;   /* darker teal for hover */
+    --background: #f3f4f6;     /* light grey page background */
+    --surface: #ffffff;        /* white cards */
+    --text: #1f2937;           /* near-black body text */
+    --muted: #6b7280;          /* grey for less important text */
+    --border: #e5e7eb;         /* thin lines between things */
+    --row-alt: #f9fafb;        /* every second table row */
+    --danger: #dc2626;         /* red: delete buttons, errors */
+    --danger-dark: #b91c1c;
+    --warning-bg: #fef3c7;     /* amber: low stock, warnings */
+    --warning-text: #92400e;
+    --success-bg: #dcfce7;     /* green: success messages */
+    --success-text: #166534;
+    --info-bg: #e0f2fe;        /* blue: normal notices */
+    --info-text: #075985;
+    --radius: 8px;             /* how rounded corners are */
+}
+
+
+/* ---------- 2. Page basics ---------- */
+
+/* Make width include padding and border, so sizes are predictable. */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    /* Use the computer's own clean font: no downloads needed. */
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+h1 {
+    margin: 0 0 20px;
+    font-size: 1.75rem;
+}
+
+h2 {
+    margin: 32px 0 12px;
+    font-size: 1.25rem;
+}
+
+a {
+    color: var(--primary);
+}
+
+
+/* ---------- 3. Navigation bar ----------
+   Flexbox puts the brand, links and user info in one row.
+   flex-wrap lets them drop onto a second line on small screens. */
+.navbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    padding: 12px 24px;
+    background: var(--primary);
+    color: #fff;
+}
+
+.brand {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.nav-links a {
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Highlight the link you hover over, and the page you are on. */
+.nav-links a:hover,
+.nav-links a.active {
+    background: var(--primary-dark);
+}
+
+/* margin-left: auto pushes the user info to the far right. */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    font-size: 0.9rem;
+}
+
+.nav-user a {
+    color: #fff;
+}
+
+/* Small rounded label showing "admin" or "cashier". */
+.badge {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+}
+
+
+/* ---------- 4. Cards and page layout ---------- */
+
+/* Keep content a readable width and centred on big screens. */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* A white box with a soft shadow, used around forms and tables. */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* A thinner, centred card for short forms like login.
+   "auto" left and right margins centre a box that has a max-width. */
+.card-narrow {
+    max-width: 420px;
+    margin: 40px auto 0;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+
+/* ---------- 5. Flash messages ----------
+   Every message gets "flash" plus "flash-<category>". Flask uses the
+   category "message" when none is given, so that is the default blue. */
+.flash {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-left: 5px solid;          /* coloured strip on the left */
+    border-radius: var(--radius);
+}
+
+.flash-message,
+.flash-info {
+    background: var(--info-bg);
+    color: var(--info-text);
+}
+
+.flash-success {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.flash-warning {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.flash-error {
+    background: #fee2e2;
+    color: var(--danger-dark);
+}
+
+
+/* ---------- 6. Forms and inputs ---------- */
+
+/* Each label sits on its own line, with its input underneath. */
+form label {
+    display: block;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+input,
+select {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius);
+    font: inherit;                   /* use the page font, not the browser's */
+    font-weight: normal;
+}
+
+/* A teal outline shows which box you are typing in. */
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.2);
+}
+
+/* Lets the small Delete form sit next to the Edit button. */
+.inline-form {
+    display: inline;
+}
+
+
+/* ---------- 7. Buttons ----------
+   .btn is the shared base. Extra classes change the colour or size.
+   It works on both <button> and <a> so links can look like buttons. */
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;                 /* hand pointer, shows it's clickable */
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Grey outline button for less important actions (Edit, Cancel). */
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background: var(--background);
+}
+
+/* Red button so destructive actions stand out. */
+.btn-danger {
+    background: var(--danger);
+}
+
+.btn-danger:hover {
+    background: var(--danger-dark);
+}
+
+.btn-small {
+    padding: 5px 12px;
+    font-size: 0.875rem;
+}
+
+
+/* ---------- 8. Tables ---------- */
+
+/* On narrow screens the table scrolls sideways inside this box
+   instead of making the whole page too wide. */
+.table-wrap {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;       /* single lines between cells */
+}
+
+th,
+td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    white-space: nowrap;             /* keep "12 Oct 2026, 10:30" on one line */
+}
+
+th {
+    background: var(--row-alt);
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Alternating row colours: every even row is slightly grey. */
+tbody tr:nth-child(even) {
+    background: var(--row-alt);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Numbers line up on the right so digits sit under each other. */
+.num {
+    text-align: right;
+}
+
+/* Low-stock rows: amber background plus a thick amber strip.
+   Placed after the even-row rule so it wins on even rows too. */
+tbody tr.low-stock {
+    background: var(--warning-bg);
+}
+
+/* An "inset" shadow draws the strip inside the cell, so the text
+   doesn't get pushed sideways like a real border would. */
+tr.low-stock td:first-child {
+    box-shadow: inset 4px 0 0 #f59e0b;
+}
+
+.low-label {
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #f59e0b;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+
+/* ---------- 9. Dashboard summary cards ----------
+   CSS grid makes as many 200px+ columns as fit: three side by side
+   on a laptop, stacked one per row on a phone. */
+.stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.stat-card h3 {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-main {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.stat-card p {
+    margin: 4px 0 0;
+}
+
+.profit {
+    color: var(--success-text);
+    font-weight: 600;
+}
+
+
+/* ---------- 10. Phone screens ----------
+   These rules only apply when the screen is 600px wide or less. */
+@media (max-width: 600px) {
+    .container {
+        padding: 16px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .navbar {
+        padding: 12px 16px;
+    }
+
+    /* Put the user info on its own line under the links. */
+    .nav-user {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    th,
+    td {
+        padding: 10px 12px;
+    }
+}

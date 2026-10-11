@@ -3,59 +3,70 @@
 {% block content %}
 <h1>Dashboard</h1>
 
-<h2>Sales Summary</h2>
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Period</th>
-        <th>Items Sold</th>
-        <th>Revenue</th>
-        <th>Profit</th>
-    </tr>
+<!-- One card per period. Same data as before, just shown as cards. -->
+<div class="stat-cards">
     {% for period, totals in summary %}
-    <tr>
-        <td>{{ period }}</td>
-        <td>{{ totals["items"] }}</td>
-        <td>{{ totals["revenue"]|naira }}</td>
-        <td>{{ totals["profit"]|naira }}</td>
-    </tr>
+    <div class="card stat-card">
+        <h3>{{ period }}</h3>
+        <p class="stat-main">{{ totals["revenue"]|naira }}</p>
+        <p class="muted">revenue</p>
+        <p class="profit">{{ totals["profit"]|naira }} profit</p>
+        <p class="muted">{{ totals["items"] }} items sold</p>
+    </div>
     {% endfor %}
-</table>
+</div>
 
 <h2>Top 5 Best Sellers</h2>
 {% if top_products %}
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Product</th>
-        <th>Quantity Sold</th>
-    </tr>
-    {% for name, quantity in top_products %}
-    <tr>
-        <td>{{ name }}</td>
-        <td>{{ quantity }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th class="num">Quantity Sold</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name, quantity in top_products %}
+            <tr>
+                <td>{{ name }}</td>
+                <td class="num">{{ quantity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
-<p>No sales yet.</p>
+<div class="card">
+    <p>No sales yet.</p>
+</div>
 {% endif %}
 
 <h2>Low Stock</h2>
 {% if low_stock %}
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Product</th>
-        <th>In Stock</th>
-        <th>Warning Level</th>
-    </tr>
-    {% for p in low_stock %}
-    <tr>
-        <td>{{ p.name }}</td>
-        <td>{{ p.stock }}</td>
-        <td>{{ p.low_stock_level }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th class="num">In Stock</th>
+                <th class="num">Warning Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in low_stock %}
+            <tr class="low-stock">
+                <td>{{ p.name }}</td>
+                <td class="num">{{ p.stock }}</td>
+                <td class="num">{{ p.low_stock_level }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
-<p>All products are well stocked.</p>
+<div class="card">
+    <p>All products are well stocked.</p>
+</div>
 {% endif %}
 {% endblock %}

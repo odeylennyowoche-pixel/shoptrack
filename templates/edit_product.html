@@ -3,13 +3,15 @@
 {% block content %}
 <h1>Edit Product</h1>
 
-<form method="POST">
-    <p>Name: <input type="text" name="name" value="{{ product.name }}" required></p>
-    <p>Selling price: <input type="number" name="price" step="0.01" min="0" value="{{ product.price }}" required></p>
-    <p>Cost price: <input type="number" name="cost" step="0.01" min="0" value="{{ product.cost }}" required></p>
-    <p>Stock quantity: <input type="number" name="stock" min="0" value="{{ product.stock }}" required></p>
-    <p>Low stock warning level: <input type="number" name="low_stock_level" min="0" value="{{ product.low_stock_level }}" required></p>
-    <button type="submit">Update Product</button>
-    <a href="{{ url_for('products') }}">Cancel</a>
-</form>
+<div class="card">
+    <form method="POST">
+        <label>Name <input type="text" name="name" value="{{ product.name }}" required></label>
+        <label>Selling price (₦) <input type="number" name="price" step="0.01" min="0" value="{{ product.price }}" required></label>
+        <label>Cost price (₦) <input type="number" name="cost" step="0.01" min="0" value="{{ product.cost }}" required></label>
+        <label>Stock quantity <input type="number" name="stock" min="0" value="{{ product.stock }}" required></label>
+        <label>Low stock warning level <input type="number" name="low_stock_level" min="0" value="{{ product.low_stock_level }}" required></label>
+        <button type="submit" class="btn">Update Product</button>
+        <a href="{{ url_for('products') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
 {% endblock %}

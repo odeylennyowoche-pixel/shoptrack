@@ -3,19 +3,21 @@
 {% block content %}
 <h1>Record Sale</h1>
 
-{% if products %}
-<form method="POST">
-    <p>Product:
-        <select name="product_id" required>
-            {% for p in products %}
-            <option value="{{ p.id }}">{{ p.name }} (₦{{ p.price }}, {{ p.stock }} in stock)</option>
-            {% endfor %}
-        </select>
-    </p>
-    <p>Quantity: <input type="number" name="quantity" value="1" min="1" required></p>
-    <button type="submit">Record Sale</button>
-</form>
-{% else %}
-<p>Nothing is in stock right now.</p>
-{% endif %}
+<div class="card">
+    {% if products %}
+    <form method="POST">
+        <label>Product
+            <select name="product_id" required>
+                {% for p in products %}
+                <option value="{{ p.id }}">{{ p.name }} ({{ p.price|naira }}, {{ p.stock }} in stock)</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Quantity <input type="number" name="quantity" value="1" min="1" required></label>
+        <button type="submit" class="btn">Record Sale</button>
+    </form>
+    {% else %}
+    <p>Nothing is in stock right now.</p>
+    {% endif %}
+</div>
 {% endblock %}

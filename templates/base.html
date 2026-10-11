@@ -2,33 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Tells phones to use their real width instead of zooming out. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ShopTrack</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <nav>
+    <nav class="navbar">
+        <a class="brand" href="{{ url_for('home') if g.user else url_for('login') }}">ShopTrack</a>
         {% if g.user %}
-            <a href="{{ url_for('products') }}">Products</a> |
-            <a href="{{ url_for('record_sale') }}">Record Sale</a>
-            {% if g.user.role == "admin" %}
-                | <a href="{{ url_for('dashboard') }}">Dashboard</a>
-                | <a href="{{ url_for('add_product') }}">Add Product</a>
-                | <a href="{{ url_for('sales') }}">Sales History</a>
-                | <a href="{{ url_for('users') }}">Users</a>
-            {% endif %}
-            | Logged in as {{ g.user.username }} ({{ g.user.role }})
-            | <a href="{{ url_for('logout') }}">Log out</a>
-        {% else %}
-            <a href="{{ url_for('login') }}">Log in</a>
+            <!-- request.endpoint is the name of the current view, e.g. "products";
+                 it is used to highlight the page you are on. -->
+            <div class="nav-links">
+                <a href="{{ url_for('products') }}" class="{{ 'active' if request.endpoint == 'products' }}">Products</a>
+                <a href="{{ url_for('record_sale') }}" class="{{ 'active' if request.endpoint == 'record_sale' }}">Record Sale</a>
+                {% if g.user.role == "admin" %}
+                    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a>
+                    <a href="{{ url_for('add_product') }}" class="{{ 'active' if request.endpoint == 'add_product' }}">Add Product</a>
+                    <a href="{{ url_for('sales') }}" class="{{ 'active' if request.endpoint == 'sales' }}">Sales History</a>
+                    <a href="{{ url_for('users') }}" class="{{ 'active' if request.endpoint == 'users' }}">Users</a>
+                {% endif %}
+            </div>
+            <div class="nav-user">
+                <span>{{ g.user.username }} <span class="badge">{{ g.user.role }}</span></span>
+                <a href="{{ url_for('logout') }}">Log out</a>
+            </div>
         {% endif %}
     </nav>
-    <hr>
 
-    {% with messages = get_flashed_messages() %}
-        {% for message in messages %}
-            <p><strong>{{ message }}</strong></p>
-        {% endfor %}
-    {% endwith %}
+    <main class="container">
+        <!-- with_categories gives (category, message) pairs; the category
+             becomes a CSS class so each kind of message can have its own colour. -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
 
-    {% block content %}{% endblock %}
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>
