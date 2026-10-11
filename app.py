@@ -103,7 +103,7 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(*args, **kwargs):
         if g.user is None:
-            flash("Please log in first.")
+            flash("Please log in first.", "warning")
             return redirect(url_for("login"))
         return view(*args, **kwargs)
     return wrapped_view
@@ -113,10 +113,10 @@ def admin_required(view):
     @wraps(view)
     def wrapped_view(*args, **kwargs):
         if g.user is None:
-            flash("Please log in first.")
+            flash("Please log in first.", "warning")
             return redirect(url_for("login"))
         if g.user.role != "admin":
-            flash("Only an admin can do that.")
+            flash("Only an admin can do that.", "warning")
             return redirect(url_for("home"))
         return view(*args, **kwargs)
     return wrapped_view
@@ -129,16 +129,16 @@ def login():
         if user and user.check_password(request.form["password"]):
             session.clear()
             session["user_id"] = user.id
-            flash(f"Welcome, {user.username}.")
+            flash(f"Welcome, {user.username}.", "success")
             return redirect(url_for("home"))
-        flash("Wrong username or password.")
+        flash("Wrong username or password.", "error")
     return render_template("login.html")
 
 
 @app.route("/logout")
 def logout():
     session.clear()
-    flash("You have been logged out.")
+    flash("You have been logged out.", "success")
     return redirect(url_for("login"))
 
 
@@ -150,17 +150,17 @@ def users():
         password = request.form["password"]
         role = request.form["role"]
         if role not in ("admin", "cashier"):
-            flash("Invalid role.")
+            flash("Invalid role.", "error")
         elif len(password) < 6:
-            flash("Password must be at least 6 characters.")
+            flash("Password must be at least 6 characters.", "error")
         elif User.query.filter_by(username=username).first():
-            flash(f"Username '{username}' is already taken.")
+            flash(f"Username '{username}' is already taken.", "error")
         else:
             user = User(username=username, role=role)
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
-            flash(f"{role.title()} '{username}' created.")
+            flash(f"{role.title()} '{username}' created.", "success")
         return redirect(url_for("users"))
     all_users = User.query.order_by(User.username).all()
     return render_template("users.html", users=all_users)
@@ -177,7 +177,7 @@ def home():
 @app.route("/products")
 @login_required
 def products():
-    all_products = Product.query.order_by(Product.name).all()
+    all_products = Product.query.order_by(db.func.lower(Product.name)).all()
     return render_template("products.html", products=all_products)
 
 
@@ -194,7 +194,7 @@ def add_product():
         )
         db.session.add(product)
         db.session.commit()
-        flash(f"{product.name} added.")
+        flash(f"{product.name} added.", "success")
         return redirect(url_for("products"))
     return render_template("add_product.html")
 
@@ -210,7 +210,7 @@ def edit_product(product_id):
         product.stock = int(request.form["stock"])
         product.low_stock_level = int(request.form["low_stock_level"])
         db.session.commit()
-        flash(f"{product.name} updated.")
+        flash(f"{product.name} updated.", "success")
         return redirect(url_for("products"))
     return render_template("edit_product.html", product=product)
 
@@ -220,11 +220,11 @@ def edit_product(product_id):
 def delete_product(product_id):
     product = db.get_or_404(Product, product_id)
     if product.sales:
-        flash(f"Can't delete {product.name} because it has sales records.")
+        flash(f"Can't delete {product.name} because it has sales records.", "error")
     else:
         db.session.delete(product)
         db.session.commit()
-        flash(f"{product.name} deleted.")
+        flash(f"{product.name} deleted.", "success")
     return redirect(url_for("products"))
 
 
@@ -235,9 +235,9 @@ def record_sale():
         product = db.get_or_404(Product, int(request.form["product_id"]))
         quantity = int(request.form["quantity"])
         if quantity < 1:
-            flash("Quantity must be at least 1.")
+            flash("Quantity must be at least 1.", "error")
         elif quantity > product.stock:
-            flash(f"Only {product.stock} {product.name} left in stock.")
+            flash(f"Only {product.stock} {product.name} left in stock.", "error")
         else:
             # Copy today's price and cost into the sale, so changing the
             # product's price later doesn't rewrite old sales.
@@ -250,9 +250,9 @@ def record_sale():
             product.stock -= quantity
             db.session.add(sale)
             db.session.commit()
-            flash(f"Sold {quantity} x {product.name} for ₦{sale.total:,.2f}.")
+            flash(f"Sold {quantity} x {product.name} for ₦{sale.total:,.2f}.", "success")
         return redirect(url_for("record_sale"))
-    in_stock = Product.query.filter(Product.stock > 0).order_by(Product.name).all()
+    in_stock = Product.query.filter(Product.stock > 0).order_by(db.func.lower(Product.name)).all()
     return render_template("record_sale.html", products=in_stock)
 
 
