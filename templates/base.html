@@ -6,8 +6,19 @@
 </head>
 <body>
     <nav>
-        <a href="{{ url_for('products') }}">Products</a> |
-        <a href="{{ url_for('add_product') }}">Add Product</a>
+        {% if g.user %}
+            <a href="{{ url_for('products') }}">Products</a> |
+            <a href="{{ url_for('record_sale') }}">Record Sale</a>
+            {% if g.user.role == "admin" %}
+                | <a href="{{ url_for('add_product') }}">Add Product</a>
+                | <a href="{{ url_for('sales') }}">Sales History</a>
+                | <a href="{{ url_for('users') }}">Users</a>
+            {% endif %}
+            | Logged in as {{ g.user.username }} ({{ g.user.role }})
+            | <a href="{{ url_for('logout') }}">Log out</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Log in</a>
+        {% endif %}
     </nav>
     <hr>
 
