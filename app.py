@@ -251,6 +251,8 @@ def record_sale():
             db.session.add(sale)
             db.session.commit()
             flash(f"Sold {quantity} x {product.name} for ₦{sale.total:,.2f}.", "success")
+            if product.stock <= product.low_stock_level:
+                flash(f"Low stock: only {product.stock} {product.name} left.", "warning")
         return redirect(url_for("record_sale"))
     in_stock = Product.query.filter(Product.stock > 0).order_by(db.func.lower(Product.name)).all()
     return render_template("record_sale.html", products=in_stock)
