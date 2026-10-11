@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<h2>Sales Summary</h2>
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Period</th>
+        <th>Items Sold</th>
+        <th>Revenue</th>
+        <th>Profit</th>
+    </tr>
+    {% for period, totals in summary %}
+    <tr>
+        <td>{{ period }}</td>
+        <td>{{ totals["items"] }}</td>
+        <td>{{ totals["revenue"]|naira }}</td>
+        <td>{{ totals["profit"]|naira }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Top 5 Best Sellers</h2>
+{% if top_products %}
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Product</th>
+        <th>Quantity Sold</th>
+    </tr>
+    {% for name, quantity in top_products %}
+    <tr>
+        <td>{{ name }}</td>
+        <td>{{ quantity }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No sales yet.</p>
+{% endif %}
+
+<h2>Low Stock</h2>
+{% if low_stock %}
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Product</th>
+        <th>In Stock</th>
+        <th>Warning Level</th>
+    </tr>
+    {% for p in low_stock %}
+    <tr>
+        <td>{{ p.name }}</td>
+        <td>{{ p.stock }}</td>
+        <td>{{ p.low_stock_level }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>All products are well stocked.</p>
+{% endif %}
+{% endblock %}

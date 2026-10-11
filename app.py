@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 
 import click
@@ -56,6 +56,24 @@ class Sale(db.Model):
 
 with app.app_context():
     db.create_all()
+
+
+@app.template_filter("naira")
+def naira(amount):
+    # Lets templates write {{ value|naira }} to show e.g. ₦1,234.50
+    return f"₦{amount:,.2f}"
+
+
+def summarize_sales(sales):
+    """Add up a list of sales into items sold, revenue and profit."""
+    items = 0
+    revenue = 0.0
+    profit = 0.0
+    for sale in sales:
+        items += sale.quantity
+        revenue += sale.total     # unit_price x quantity (saved on the sale)
+        profit += sale.profit     # (unit_price - unit_cost) x quantity
+    return {"items": items, "revenue": revenue, "profit": profit}
 
 
 @app.cli.command("create-admin")
@@ -243,6 +261,45 @@ def record_sale():
 def sales():
     recent_sales = Sale.query.order_by(Sale.sold_at.desc()).limit(50).all()
     return render_template("sales.html", sales=recent_sales)
+
+
+@app.route("/dashboard")
+@admin_required
+def dashboard():
+    now = datetime.now()
+    # Midnight today, then step back to Monday (weekday() is 0 for Monday).
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = today_start - timedelta(days=today_start.weekday())
+
+    all_sales = Sale.query.all()
+    today_sales = [s for s in all_sales if s.sold_at >= today_start]
+    week_sales = [s for s in all_sales if s.sold_at >= week_start]
+
+    summary = [
+        ("Today", summarize_sales(today_sales)),
+        ("This Week", summarize_sales(week_sales)),
+        ("All Time", summarize_sales(all_sales)),
+    ]
+
+    # Count how many of each product have been sold, then keep the top 5.
+    quantity_by_product = {}
+    for sale in all_sales:
+        name = sale.product.name
+        quantity_by_product[name] = quantity_by_product.get(name, 0) + sale.quantity
+    top_products = sorted(quantity_by_product.items(), key=lambda item: item[1], reverse=True)[:5]
+
+    low_stock = (
+        Product.query.filter(Product.stock <= Product.low_stock_level)
+        .order_by(Product.stock)
+        .all()
+    )
+
+    return render_template(
+        "dashboard.html",
+        summary=summary,
+        top_products=top_products,
+        low_stock=low_stock,
+    )
 
 
 if __name__ == "__main__":

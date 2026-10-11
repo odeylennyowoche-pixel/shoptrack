@@ -10,6 +10,7 @@
             <a href="{{ url_for('products') }}">Products</a> |
             <a href="{{ url_for('record_sale') }}">Record Sale</a>
             {% if g.user.role == "admin" %}
+                | <a href="{{ url_for('dashboard') }}">Dashboard</a>
                 | <a href="{{ url_for('add_product') }}">Add Product</a>
                 | <a href="{{ url_for('sales') }}">Sales History</a>
                 | <a href="{{ url_for('users') }}">Users</a>
